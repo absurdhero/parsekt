@@ -1,4 +1,4 @@
-Parsekt
+ParSekt &#127863;
 =======
 
 Parser Combinator library for [Kotlin](http://kotlinlang.org) based on
