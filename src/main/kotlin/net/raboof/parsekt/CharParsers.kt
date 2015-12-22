@@ -18,14 +18,15 @@ abstract class CharParsers<TInput>() : Parsers<TInput>() {
         return anyChar.filter({ ch: Char -> regex.matches(ch.toString())})
     }
 
-    public fun charL(ch: Char) = char(ch).asList()
-    public fun charL(predicate: (Char) -> Boolean) = char(predicate).asList()
-
 //    public val whitespace: Parser<TInput, List<Char>> = repeat(char(' ') or char('\t') or char('\n') or char('\r'));
     public val whitespace = repeat(char(Regex("""\s""")))
     public val wordChar = char(Regex("""\w"""))
     public fun wsChar(ch: Char) = whitespace then char(ch)
-    public val token = repeat1(wordChar).surroundWith(whitespace)
+    public val token = repeat1(wordChar).between(whitespace)
+
+    public fun concat(p1: Parser<TInput, Char>, p2: Parser<TInput, List<Char>>): Parser<TInput, List<Char>> {
+        return p1.project({v: Char, l: List<Char> -> arrayListOf(v) + l })({p2})
+    }
 }
 
 fun <TInput> Parser<TInput, List<Char>>.string(): Parser<TInput, String> {

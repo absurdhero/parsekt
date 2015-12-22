@@ -22,7 +22,7 @@ class CharParsersTest {
     fun chars() {
         assertEquals(null, parser.char('(')("x"))
         assertEquals(Result('(', "test)"), parser.char('(')("(test)"))
-        assertEquals(Result(listOf('('), "test)"), parser.charL('(')("(test)"))
+        assertEquals(Result(listOf('('), "test)"), parser.char('(').asList()("(test)"))
     }
 
     @Test
@@ -39,9 +39,9 @@ class CharParsersTest {
 
     @Test
     fun parenWrappedToken() {
-        val parenWrappedToken = parser.token.surroundWith(
-                parser.charL('(') then parser.whitespace,
-                parser.whitespace then parser.charL(')'))
+        val parenWrappedToken = parser.token.between(
+                parser.char('(') then parser.whitespace,
+                parser.whitespace then parser.char(')'))
 
         assertEquals(Result(listOf('x'), ""), parenWrappedToken("(x)"))
         assertEquals(Result("test", ""), parenWrappedToken.string()("(test)"))
