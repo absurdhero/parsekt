@@ -41,8 +41,12 @@ open class Parser<TInput, TValue>(val f: (TInput) -> Result<TInput, TValue>?) {
             if (result == null) {
                 null
             } else {
-                other(result.rest)
-                result
+                var res2 = other(result.rest)
+                if (res2 == null) {
+                    null
+                } else {
+                    result
+                }
             }
         })
     }
