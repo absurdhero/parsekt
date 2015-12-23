@@ -1,9 +1,14 @@
 package net.raboof.parsekt
 
+import net.raboof.parsekt.samples.AppTerm
+import net.raboof.parsekt.samples.LambdaTerm
 import net.raboof.parsekt.samples.MiniML
+import net.raboof.parsekt.samples.VarTerm
 import org.junit.Test
+import kotlin.collections.emptyList
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
+import kotlin.test.assertNull
 import kotlin.text.substring
 
 
@@ -19,22 +24,46 @@ class MiniMLTest {
             }
     }
 
+    val parser = MiniMLStringParser();
+
     @Test
     public fun ident() {
-        val parser = MiniMLStringParser();
         assertEquals("A123", parser.Ident("""A123""")?.value)
     }
 
     @Test
     public fun lambda() {
-        val parser = MiniMLStringParser();
-        assertNotNull(parser.Lambda("""\x.y"""))
+        assertEquals(
+                LambdaTerm("x", LambdaTerm("y", AppTerm(VarTerm("z"), emptyList()))),
+                parser.Lambda("""\x.\y.z""")?.value)
     }
 
+    @Test
+    public fun term1() {
+        assertEquals(VarTerm("A123"), parser.Term1("""A123""")?.value)
+        assertEquals(AppTerm(VarTerm("x"), emptyList()), parser.Term1("""(x)""")?.value)
+    }
+
+    @Test
+    public fun term() {
+        // lambda
+        assertEquals(
+                LambdaTerm("x", LambdaTerm("y", AppTerm(VarTerm("z"), emptyList()))),
+                parser.Term("""\x.\y.z""")?.value)
+        // app
+        assertEquals((AppTerm(VarTerm("A123"), emptyList())), parser.Term("""A123""")?.value)
+    }
+
+    @Test
+    public fun let() {
+        assertNotNull(parser.Let("""let x = y in z"""))
+    }
 
     @Test
     public fun program() {
-        val parser = MiniMLStringParser();
+        assertNotNull(parser.All("\\x.y;"))
+        assertNull(parser.All("\\x.y"), "do not match if semicolon missing")
+
         assertNotNull(parser.All("""
              let true = \x.\y.x in
              let false = \x.\y.y in

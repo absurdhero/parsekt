@@ -9,10 +9,10 @@ import kotlin.text.isLetterOrDigit
 
 // Term and its derived classes define the AST for terms in the MiniML language.
 public interface Terminal { }
-public class LambdaTerm(val ident: String, val term: Terminal) : Terminal {}
-public class LetTerm(val ident: String, val rhs: Terminal, val body: Terminal) : Terminal {}
-public class AppTerm(val func: Terminal, args: List<Terminal>) : Terminal {}
-public class VarTerm(val ident: String) : Terminal {}
+public data class LambdaTerm(val ident: String, val term: Terminal) : Terminal {}
+public data class LetTerm(val ident: String, val rhs: Terminal, val body: Terminal) : Terminal {}
+public data class AppTerm(val func: Terminal, val args: List<Terminal>) : Terminal {}
+public data class VarTerm(val ident: String) : Terminal {}
 
 /* Translated from MiniML on Luke Hoban's Blog
    http://blogs.msdn.com/b/lukeh/archive/2007/08/19/monadic-parser-combinators-using-c-3-0.aspx?PageIndex=2#comments
@@ -24,8 +24,15 @@ abstract class MiniML<TInput>(): CharParsers<TInput>() {
     val LetId = Id.filter { it == "let" }
     val InId = Id.filter { it == "in" }
 
-
-    val Lambda: Parser<TInput, Terminal> = Ident.mapJoin({ Term.between(wsChar('\\'), wsChar('.')) }, { x, t -> LambdaTerm(x,t)})
+    /*
+     from u1 in WsChr('\\')
+     from x in Ident
+     from u2 in WsChr('.')
+     from t in Term
+     select (Term)new LambdaTerm(x,t)
+     */
+    val Lambda: Parser<TInput, Terminal> = Ident.between(wsChar('\\'), wsChar('.'))
+            .mapJoin({ Term }, { x, t -> LambdaTerm(x,t)})
 
     /*
      from letid in LetId
