@@ -4,6 +4,8 @@ import net.raboof.parsekt.CharParsers
 import net.raboof.parsekt.Parser
 import net.raboof.parsekt.Reference
 import net.raboof.parsekt.string
+import kotlin.text.isLetter
+import kotlin.text.isLetterOrDigit
 
 // Term and its derived classes define the AST for terms in the MiniML language.
 public interface Terminal { }

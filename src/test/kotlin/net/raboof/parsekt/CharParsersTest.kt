@@ -1,6 +1,7 @@
 package net.raboof.parsekt
 
 import org.junit.Test
+import kotlin.collections.*
 import kotlin.test.assertEquals
 
 class CharParsersTest {

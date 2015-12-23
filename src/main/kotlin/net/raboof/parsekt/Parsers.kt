@@ -1,5 +1,9 @@
 package net.raboof.parsekt
 
+import kotlin.collections.arrayListOf
+import kotlin.collections.emptyList
+import kotlin.collections.plus
+
 abstract class Parsers<TInput> {
     public fun <TValue> succeed(value: TValue): Parser<TInput, TValue> {
         return Parser({ input -> Result(value, input) })

@@ -1,5 +1,9 @@
 package net.raboof.parsekt
 
+import kotlin.collections.arrayListOf
+import kotlin.collections.joinToString
+import kotlin.collections.plus
+import kotlin.collections.toCharArray
 import kotlin.text.Regex
 
 abstract class CharParsers<TInput>() : Parsers<TInput>() {
@@ -30,5 +34,5 @@ abstract class CharParsers<TInput>() : Parsers<TInput>() {
 }
 
 fun <TInput> Parser<TInput, List<Char>>.string(): Parser<TInput, String> {
-    return this.withResult { Result(String(it.value.toCharArray()), it.rest) }
+    return this.withResult { Result(it.value.toCharArray().joinToString(""), it.rest) }
 }

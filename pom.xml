@@ -14,7 +14,7 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <kotlin.version>1.0.0-beta-3595</kotlin.version>
+        <kotlin.version>1.0.0-beta-4583</kotlin.version>
         <junit.version>4.11</junit.version>
     </properties>
 
@@ -22,6 +22,12 @@
         <dependency>
             <groupId>org.jetbrains.kotlin</groupId>
             <artifactId>kotlin-stdlib</artifactId>
+            <version>${kotlin.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jetbrains.kotlin</groupId>
+            <artifactId>kotlin-test</artifactId>
             <version>${kotlin.version}</version>
         </dependency>
 

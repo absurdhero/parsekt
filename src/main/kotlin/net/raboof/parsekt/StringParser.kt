@@ -1,5 +1,7 @@
 package net.raboof.parsekt
 
+import kotlin.text.substring
+
 public class StringParser() : CharParsers<String>() {
     override val anyChar: Parser<String, Char>
         get() = Parser { input: String ->

@@ -4,6 +4,7 @@ import net.raboof.parsekt.samples.MiniML
 import org.junit.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
+import kotlin.text.substring
 
 
 class MiniMLTest {

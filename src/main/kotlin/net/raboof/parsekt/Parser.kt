@@ -1,5 +1,7 @@
 package net.raboof.parsekt
 
+import kotlin.collections.listOf
+
 // based on http://blogs.msdn.com/b/lukeh/archive/2007/08/19/monadic-parser-combinators-using-c-3-0.aspx
 
 open class Parser<TInput, TValue>(val f: (TInput) -> Result<TInput, TValue>?) {
