@@ -1,9 +1,6 @@
 package net.raboof.parsekt
 
-import net.raboof.parsekt.samples.AppTerm
-import net.raboof.parsekt.samples.LambdaTerm
-import net.raboof.parsekt.samples.MiniML
-import net.raboof.parsekt.samples.VarTerm
+import net.raboof.parsekt.samples.*
 import org.junit.Test
 import kotlin.collections.emptyList
 import kotlin.test.assertEquals
@@ -56,7 +53,9 @@ class MiniMLTest {
 
     @Test
     public fun let() {
-        assertNotNull(parser.Let("""let x = y in z"""))
+        assertEquals(
+                LetTerm("x", AppTerm(VarTerm("y"), emptyList()), AppTerm(VarTerm("z"), emptyList())) as Terminal,
+                parser.Let("""let x = y in z""")?.value)
     }
 
     @Test

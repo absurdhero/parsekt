@@ -45,7 +45,7 @@ open class Parser<TInput, TValue>(val f: (TInput) -> Result<TInput, TValue>?) {
                 if (res2 == null) {
                     null
                 } else {
-                    result
+                    Result(result.value, res2.rest)
                 }
             }
         })
