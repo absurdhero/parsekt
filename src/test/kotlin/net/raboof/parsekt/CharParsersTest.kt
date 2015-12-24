@@ -41,8 +41,8 @@ class CharParsersTest {
     @Test
     fun parenWrappedToken() {
         val parenWrappedToken = parser.token.between(
-                parser.char('(') then parser.whitespace,
-                parser.whitespace then parser.char(')'))
+                parser.char('(') and parser.whitespace,
+                parser.whitespace and parser.char(')'))
 
         assertEquals(Result(listOf('x'), ""), parenWrappedToken("(x)"))
         assertEquals(Result("test", ""), parenWrappedToken.string()("(test)"))

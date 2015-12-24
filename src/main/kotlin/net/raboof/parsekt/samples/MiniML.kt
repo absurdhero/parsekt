@@ -20,7 +20,7 @@ public data class VarTerm(val ident: String) : Terminal {}
  */
 abstract class MiniML<TInput>(): CharParsers<TInput>() {
 
-    val Id = whitespace then concat(char(Char::isLetter), repeat(char(Char::isLetterOrDigit))).string()
+    val Id = whitespace and concat(char(Char::isLetter), repeat(char(Char::isLetterOrDigit))).string()
     val Ident = Id.filter { it != "let" && it != "in" }
     val LetId = Id.filter { it == "let" }
     val InId = Id.filter { it == "in" }

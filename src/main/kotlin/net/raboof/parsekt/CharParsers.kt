@@ -24,7 +24,7 @@ abstract class CharParsers<TInput>() : Parsers<TInput>() {
 //    public val whitespace: Parser<TInput, List<Char>> = repeat(char(' ') or char('\t') or char('\n') or char('\r'));
     public val whitespace = repeat(char(Regex("""\s""")))
     public val wordChar = char(Regex("""\w"""))
-    public fun wsChar(ch: Char) = whitespace then char(ch)
+    public fun wsChar(ch: Char) = whitespace and char(ch)
     public val token = repeat1(wordChar).between(whitespace)
 
     public fun concat(p1: Parser<TInput, Char>, p2: Parser<TInput, List<Char>>): Parser<TInput, List<Char>> {
@@ -33,5 +33,5 @@ abstract class CharParsers<TInput>() : Parsers<TInput>() {
 }
 
 fun <TInput> Parser<TInput, List<Char>>.string(): Parser<TInput, String> {
-    return this.withResult { Result(it.value.joinToString(""), it.rest) }
+    return this.mapResult { Result(it.value.joinToString(""), it.rest) }
 }
