@@ -26,25 +26,9 @@ abstract class MiniML<TInput>(): CharParsers<TInput>() {
     val LetId = Id.filter { it == "let" }
     val InId = Id.filter { it == "in" }
 
-    /* LINQ:
-     from u1 in WsChr('\\')
-     from x in Ident
-     from u2 in WsChr('.')
-     from t in Term
-     select (Term)new LambdaTerm(x,t)
-     */
     val Lambda: Parser<TInput, Terminal> = Ident.between(wsChar('\\'), wsChar('.'))
             .mapJoin({ Term }, { x, t -> LambdaTerm(x,t)})
 
-    /* LINQ:
-     from letid in LetId
-     from x in Ident // capture
-     from u1 in WsChr('=')
-     from t in Term // capture
-     from inid in InId
-     from c in Term // capture
-     select (Term)new LetTerm(x,t,c))
-    */
     val Let : Parser<TInput, Terminal> = Ident.between(LetId, wsChar('='))
             .mapJoin(
                     {(Term before InId).mapJoin({Term}, {v, s -> Pair(v,s)})},
@@ -53,24 +37,10 @@ abstract class MiniML<TInput>(): CharParsers<TInput>() {
     private val Term1Ref : Reference<TInput, Terminal> = Reference()
     val Term1 = Term1Ref.get()
 
-    /* LINQ:
-     from t in Term1
-     from ts in Rep(Term1)
-     select (Term)new AppTerm(t,ts))
-     */
     val App : Parser<TInput, Terminal> = Term1.mapJoin({repeat(Term1)}, {t, ts -> AppTerm(t, ts)})
 
     val Term = Lambda or Let or App
 
-    /* LINQ:
-     Term1 = (from x in Ident
-                 select (Term)new VarTerm(x))
-                .OR(
-                (from u1 in WsChr('(')
-                 from t in Term
-                 from u2 in WsChr(')')
-                 select t));
-     */
     init { Term1Ref.set(Ident.map { VarTerm(it) as Terminal } or Term.between(char('('), char(')'))) }
 
     val All : Parser<TInput, Terminal> = Term before wsChar(';')
