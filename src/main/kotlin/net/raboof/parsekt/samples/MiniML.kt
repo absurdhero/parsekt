@@ -4,6 +4,7 @@ import net.raboof.parsekt.CharParsers
 import net.raboof.parsekt.Parser
 import net.raboof.parsekt.Reference
 import net.raboof.parsekt.string
+import kotlin.collections.emptyList
 import kotlin.text.isLetter
 import kotlin.text.isLetterOrDigit
 
@@ -11,7 +12,7 @@ import kotlin.text.isLetterOrDigit
 public interface Terminal { }
 public data class LambdaTerm(val ident: String, val term: Terminal) : Terminal {}
 public data class LetTerm(val ident: String, val rhs: Terminal, val body: Terminal) : Terminal {}
-public data class AppTerm(val func: Terminal, val args: List<Terminal>) : Terminal {}
+public data class AppTerm(val func: Terminal, val args: List<Terminal> = emptyList()) : Terminal {}
 public data class VarTerm(val ident: String) : Terminal {}
 
 /* Translated from MiniML on Luke Hoban's Blog

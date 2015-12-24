@@ -31,30 +31,30 @@ class MiniMLTest {
     @Test
     public fun lambda() {
         assertEquals(
-                LambdaTerm("x", LambdaTerm("y", AppTerm(VarTerm("z"), emptyList()))),
+                LambdaTerm("x", LambdaTerm("y", AppTerm(VarTerm("z")))),
                 parser.Lambda("""\x.\y.z""")?.value)
     }
 
     @Test
     public fun term1() {
         assertEquals(VarTerm("A123"), parser.Term1("""A123""")?.value)
-        assertEquals(AppTerm(VarTerm("x"), emptyList()), parser.Term1("""(x)""")?.value)
+        assertEquals(AppTerm(VarTerm("x")), parser.Term1("""(x)""")?.value)
     }
 
     @Test
     public fun term() {
         // lambda
         assertEquals(
-                LambdaTerm("x", LambdaTerm("y", AppTerm(VarTerm("z"), emptyList()))),
+                LambdaTerm("x", LambdaTerm("y", AppTerm(VarTerm("z")))),
                 parser.Term("""\x.\y.z""")?.value)
         // app
-        assertEquals((AppTerm(VarTerm("A123"), emptyList())), parser.Term("""A123""")?.value)
+        assertEquals((AppTerm(VarTerm("A123"))), parser.Term("""A123""")?.value)
     }
 
     @Test
     public fun let() {
         assertEquals(
-                LetTerm("x", AppTerm(VarTerm("y"), emptyList()), AppTerm(VarTerm("z"), emptyList())) as Terminal,
+                LetTerm("x", AppTerm(VarTerm("y")), AppTerm(VarTerm("z"))) as Terminal,
                 parser.Let("""let x = y in z""")?.value)
     }
 
