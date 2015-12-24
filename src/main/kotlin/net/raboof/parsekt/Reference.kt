@@ -1,6 +1,6 @@
 package net.raboof.parsekt
 
-
+/** useful when declaring mutually recursive parsers */
 class Reference<TInput, TValue> {
     private var parser: Parser<TInput, TValue> = Parser({throw NotImplementedError("parser reference not set") })
 

@@ -2,7 +2,6 @@ package net.raboof.parsekt
 
 import net.raboof.parsekt.samples.*
 import org.junit.Test
-import kotlin.collections.emptyList
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertNull

@@ -76,7 +76,7 @@ open class Parser<TInput, TValue>(val f: (TInput) -> Result<TInput, TValue>?) {
         }
     }
 
-    fun asList() : Parser<TInput, List<TValue>> {
+    fun asList(): Parser<TInput, List<TValue>> {
         return mapResult { Result(listOf(it.value), it.rest) }
     }
 }
