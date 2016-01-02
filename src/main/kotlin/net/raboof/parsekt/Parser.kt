@@ -71,9 +71,7 @@ open class Parser<TInput, TValue>(val f: (TInput) -> Result<TInput, TValue>?) {
 
     // extract the result of this parser from the input between two other parsers
     fun between(start: Parser<TInput, *>, end: Parser<TInput, *> = start): Parser<TInput, TValue> {
-        return start.and(this).mapResult { res ->
-            end.mapResult { Result(res.value, it.rest) }.invoke(res.rest)
-        }
+        return start and this before end
     }
 
     fun asList(): Parser<TInput, List<TValue>> {
