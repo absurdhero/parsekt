@@ -24,9 +24,6 @@ abstract class PrefixCalc<TInput>() : CharParsers<TInput>() {
     }
 
     data class Operation(val operator: Char, val exprs: List<Expr>) : Expr {
-        init {
-            System.out.println(this)
-        }
         override fun evaluate() : Long {
             val terms = exprs.map { it.evaluate() }
             return when (operator) {
@@ -40,9 +37,6 @@ abstract class PrefixCalc<TInput>() : CharParsers<TInput>() {
     }
 
     data class Number(val value: String) : Expr {
-        init {
-            System.out.println(this)
-        }
         override fun evaluate() : Long {
             return value.toLong()
         }

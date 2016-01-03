@@ -13,7 +13,6 @@ class PrefixCalcTest {
     public class PrefixCalcStringParser() : PrefixCalc<String>() {
         override val anyChar: Parser<String, Char>
             get() = Parser { input: String ->
-                System.out.print("${input.length}: ")
                 when (input.length) {
                     0 -> null
                     1 -> Result(input[0], "")
