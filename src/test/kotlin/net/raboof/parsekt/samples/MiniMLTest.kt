@@ -1,6 +1,7 @@
-package net.raboof.parsekt
+package net.raboof.parsekt.samples
 
-import net.raboof.parsekt.samples.*
+import net.raboof.parsekt.Parser
+import net.raboof.parsekt.Result
 import org.junit.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
