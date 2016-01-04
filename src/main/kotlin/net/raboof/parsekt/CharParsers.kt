@@ -5,6 +5,7 @@ import kotlin.collections.joinToString
 import kotlin.collections.plus
 import kotlin.text.Regex
 
+/** Extends the basic combinators with many character-specific parsers */
 abstract class CharParsers<TInput>() : Parsers<TInput>() {
     // implement anyChar to read a character from a sequence
     abstract val anyChar: Parser<TInput, Char>

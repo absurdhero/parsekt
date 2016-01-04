@@ -10,9 +10,7 @@ import kotlin.text.isDigit
 import kotlin.text.toLong
 
 
-/** A 4-function calculator for integers that uses prefix notation.
- *
- * */
+/** A 4-function calculator for integers that uses prefix notation. */
 abstract class PrefixCalc<TInput>() : CharParsers<TInput>() {
     /** evaluate the input or return null */
     fun evaluate(input: TInput) : Long? {

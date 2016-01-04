@@ -4,8 +4,13 @@ import kotlin.collections.listOf
 
 // based on http://blogs.msdn.com/b/lukeh/archive/2007/08/19/monadic-parser-combinators-using-c-3-0.aspx
 
+/** A Parser is both a function and an object with methods that return derivative parsers */
 open class Parser<TInput, TValue>(val f: (TInput) -> Result<TInput, TValue>?) {
+
+    /** A parser can be invoked as a function of an input that returns a result or null */
     operator fun invoke(input: TInput): Result<TInput, TValue>? = f(input)
+
+    /* the following filter and map functions are the building blocks used to derive new parsers */
 
     fun filter(pred: (TValue) -> Boolean): Parser<TInput, TValue> {
         return Parser({ input ->
@@ -32,6 +37,11 @@ open class Parser<TInput, TValue>(val f: (TInput) -> Result<TInput, TValue>?) {
     fun <TValue2> map(selector: (TValue) -> TValue2): Parser<TInput, TValue2>
             = mapResult { result -> Result(selector(result.value), result.rest) }
 
+    /** This function is a convenient way to build parsers that act on more that one input parser.
+     *
+     * It invokes "this" followed by the parser returned from the selector function.
+     * It then passes the two resulting values to the projector which returns one result.
+     */
     fun <TIntermediate, TValue2> mapJoin(
             selector: (TValue) -> Parser<TInput, TIntermediate>,
             projector: (TValue, TIntermediate) -> TValue2
@@ -49,6 +59,10 @@ open class Parser<TInput, TValue>(val f: (TInput) -> Result<TInput, TValue>?) {
         })
     }
 
+    /* These are some essential combinators which are
+       functions that take parsers as arguments and return a new parser
+     */
+
     infix fun or(other: Parser<TInput, TValue>): Parser<TInput, TValue> {
         return Parser({ input -> this(input) ?: other(input) })
     }
@@ -60,6 +74,8 @@ open class Parser<TInput, TValue>(val f: (TInput) -> Result<TInput, TValue>?) {
     infix fun <TValue2> before(other: Parser<TInput, TValue2>): Parser<TInput, TValue> =
             this.mapJoin({ other }, { v, i -> v })
 
+
+    /* Generally useful functions */
 
     // curry the projector function in mapJoin
     fun <TIntermediate, TValue2> project(projector: (TValue, TIntermediate) -> TValue2)
