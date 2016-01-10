@@ -35,6 +35,40 @@ abstract class CharParsers<TInput>() : Parsers<TInput>() {
     public fun charPrefix(prefix: Char, parser: Parser<TInput, List<Char>>): Parser<TInput, List<Char>> {
         return concat(char(prefix), parser) or parser
     }
+
+    /** greedy regex matcher */
+    public fun substring(regex: Regex): Parser<TInput, List<Char>> {
+        return Parser({ input ->
+            var result = anyChar(input)
+            if (result == null) {
+                null
+            } else {
+                val temp = StringBuilder()
+                var lastRest: TInput = result.rest
+                var everMatched = false
+
+                while (result != null) {
+                    temp.append(result.value)
+                    if (regex.matches(temp)) {
+                        everMatched = true
+                    } else if (everMatched == true) {
+                        temp.deleteCharAt(temp.length-1)
+                        break
+                    }
+
+                    lastRest = result.rest
+                    result = anyChar(result.rest)
+                }
+
+                if (everMatched) {
+                    Result(temp.toList(), lastRest)
+                } else {
+                    null
+                }
+            }
+        })
+    }
+
 }
 
 fun <TInput> Parser<TInput, List<Char>>.string(): Parser<TInput, String> {

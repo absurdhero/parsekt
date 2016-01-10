@@ -48,4 +48,13 @@ class CharParsersTest {
         assertEquals(Result("test", ""), parenWrappedToken.string()("(test)"))
         assertEquals(Result("test", " "), parenWrappedToken.string()("( test ) "))
     }
+
+    @Test
+    fun substring() {
+        assertEquals(null, parser.substring(Regex("a"))("x"))
+        assertEquals(Result("(", "test)"), parser.substring(Regex("\\(")).string()("(test)"))
+        assertEquals(Result("(test", ")"), parser.substring(Regex("\\([^)]*")).string()("(test)"))
+        assertEquals(Result("(test)", ""), parser.substring(Regex("\\([^)]+\\)")).string()("(test)"))
+        assertEquals(Result("(test)", ""), parser.substring(Regex(".*")).string()("(test)"))
+    }
 }
