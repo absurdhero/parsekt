@@ -128,4 +128,9 @@ open class Parser<TInput, TValue>(val f: (TInput) -> Result<TInput, TValue>) {
     fun asList(): Parser<TInput, List<TValue>> {
         return mapResult { Result.Value(listOf(it.value), it.rest) }
     }
+
+    // sometimes useful for working around covariance problems (or from T to T?)
+    fun <TValue2> cast() : Parser<TInput, TValue2> {
+        return this as Parser<TInput, TValue2>
+    }
 }

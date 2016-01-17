@@ -32,7 +32,7 @@ public sealed class Result<TInput, TValue> {
                                             val rest: TInput) : Result<TInput, TValue>() {
 
         /** make a parent of another error */
-        constructor(production: String, error: ParseError<TInput, *>) : this(production, error.child, error.rest)
+        constructor(production: String, error: ParseError<TInput, *>) : this(production, error, error.rest)
 
         /** no child */
         constructor(production: String, rest: TInput) : this(production, null, rest)
