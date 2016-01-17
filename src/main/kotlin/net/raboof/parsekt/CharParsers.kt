@@ -11,19 +11,19 @@ abstract class CharParsers<TInput>() : Parsers<TInput>() {
     abstract val anyChar: Parser<TInput, Char>
 
     public fun char(ch: Char): Parser<TInput, Char> {
-        return anyChar.filter({ c -> c == ch })
+        return anyChar.filter({ c -> c == ch }).withErrorLabel("char($ch)")
     }
 
     public fun char(predicate: (Char) -> Boolean): Parser<TInput, Char> {
-        return anyChar.filter(predicate)
+        return anyChar.filter(predicate).withErrorLabel("char(predicate)")
     }
 
     public fun char(regex: Regex): Parser<TInput, Char> {
-        return anyChar.filter({ ch: Char -> regex.matches(ch.toString())})
+        return anyChar.filter({ ch: Char -> regex.matches(ch.toString()) }).withErrorLabel("char(/$regex/)")
     }
 
 //    public val whitespace: Parser<TInput, List<Char>> = repeat(char(' ') or char('\t') or char('\n') or char('\r'));
-    public val whitespace = repeat(char(Regex("""\s""")))
+    public val whitespace = repeat(char(Regex("""\s"""))).withErrorLabel("whitespace")
     public val wordChar = char(Regex("""\w"""))
     public fun wsChar(ch: Char) = whitespace and char(ch)
     public val token = repeat1(wordChar).between(whitespace)
@@ -40,30 +40,33 @@ abstract class CharParsers<TInput>() : Parsers<TInput>() {
     public fun substring(regex: Regex): Parser<TInput, List<Char>> {
         return Parser({ input ->
             var result = anyChar(input)
-            if (result == null) {
-                null
-            } else {
-                val temp = StringBuilder()
-                var lastRest: TInput = result.rest
-                var everMatched = false
+            when (result) {
+                is Result.ParseError -> Result.ParseError(result)
+                is Result.Value -> {
+                    val temp = StringBuilder()
+                    var lastRest: TInput = result.rest
+                    var everMatched = false
 
-                while (result != null) {
-                    temp.append(result.value)
-                    if (regex.matches(temp)) {
-                        everMatched = true
-                    } else if (everMatched == true) {
-                        temp.deleteCharAt(temp.length-1)
-                        break
+                    while (result !is Result.ParseError) {
+                        result as Result.Value
+
+                        temp.append(result.value)
+                        if (regex.matches(temp)) {
+                            everMatched = true
+                        } else if (everMatched == true) {
+                            temp.deleteCharAt(temp.length-1)
+                            break
+                        }
+
+                        lastRest = result.rest
+                        result = anyChar(result.rest)
                     }
 
-                    lastRest = result.rest
-                    result = anyChar(result.rest)
-                }
-
-                if (everMatched) {
-                    Result(temp.toList(), lastRest)
-                } else {
-                    null
+                    if (everMatched) {
+                        Result.Value(temp.toList(), lastRest)
+                    } else {
+                        Result.ParseError("/$regex/", lastRest)
+                    }
                 }
             }
         })
@@ -72,5 +75,5 @@ abstract class CharParsers<TInput>() : Parsers<TInput>() {
 }
 
 fun <TInput> Parser<TInput, List<Char>>.string(): Parser<TInput, String> {
-    return this.mapResult { Result(it.value.joinToString(""), it.rest) }
+    return this.mapResult { Result.Value(it.value.joinToString(""), it.rest) }
 }

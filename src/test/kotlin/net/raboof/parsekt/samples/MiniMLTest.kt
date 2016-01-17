@@ -5,7 +5,7 @@ import net.raboof.parsekt.Result
 import org.junit.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
-import kotlin.test.assertNull
+import kotlin.test.assertTrue
 import kotlin.text.substring
 
 
@@ -14,9 +14,9 @@ class MiniMLTest {
         override val anyChar: Parser<String, Char>
             get() = Parser { input: String ->
                 when (input.length) {
-                    0 -> null
-                    1 -> Result(input[0], "")
-                    else -> Result(input[0], input.substring(1))
+                    0 -> Result.ParseError<String, Char>("EOF", null, "")
+                    1 -> Result.Value(input[0], "")
+                    else -> Result.Value(input[0], input.substring(1))
                 }
             }
     }
@@ -25,20 +25,20 @@ class MiniMLTest {
 
     @Test
     public fun ident() {
-        assertEquals("A123", parser.Ident("""A123""")?.value)
+        assertEquals("A123", parser.Ident("""A123""").valueOrFail())
     }
 
     @Test
     public fun lambda() {
         assertEquals(
                 LambdaTerm("x", LambdaTerm("y", AppTerm(VarTerm("z")))),
-                parser.Lambda("""\x.\y.z""")?.value)
+                parser.Lambda("""\x.\y.z""").valueOrFail())
     }
 
     @Test
     public fun term1() {
-        assertEquals(VarTerm("A123"), parser.Term1("""A123""")?.value)
-        assertEquals(AppTerm(VarTerm("x")), parser.Term1("""(x)""")?.value)
+        assertEquals(VarTerm("A123"), parser.Term1("""A123""").valueOrFail())
+        assertEquals(AppTerm(VarTerm("x")), parser.Term1("""(x)""").valueOrFail())
     }
 
     @Test
@@ -46,22 +46,22 @@ class MiniMLTest {
         // lambda
         assertEquals(
                 LambdaTerm("x", LambdaTerm("y", AppTerm(VarTerm("z")))),
-                parser.Term("""\x.\y.z""")?.value)
+                parser.Term("""\x.\y.z""").valueOrFail())
         // app
-        assertEquals((AppTerm(VarTerm("A123"))), parser.Term("""A123""")?.value)
+        assertEquals((AppTerm(VarTerm("A123"))), parser.Term("""A123""").valueOrFail())
     }
 
     @Test
     public fun let() {
         assertEquals(
                 LetTerm("x", AppTerm(VarTerm("y")), AppTerm(VarTerm("z"))) as Terminal,
-                parser.Let("""let x = y in z""")?.value)
+                parser.Let("""let x = y in z""").valueOrFail())
     }
 
     @Test
     public fun program() {
         assertNotNull(parser.All("\\x.y;"))
-        assertNull(parser.All("\\x.y"), "do not match if semicolon missing")
+        assertTrue(parser.All("\\x.y") is Result.ParseError, "do not match if semicolon missing")
 
         assertNotNull(parser.All("""
              let true = \x.\y.x in

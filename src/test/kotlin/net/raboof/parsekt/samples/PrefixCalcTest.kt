@@ -14,9 +14,9 @@ class PrefixCalcTest {
         override val anyChar: Parser<String, Char>
             get() = Parser { input: String ->
                 when (input.length) {
-                    0 -> null
-                    1 -> Result(input[0], "")
-                    else -> Result(input[0], input.substring(1))
+                    0 -> Result.ParseError<String, Char>("EOF", null, "")
+                    1 -> Result.Value(input[0], "")
+                    else -> Result.Value(input[0], input.substring(1))
                 }
             }
     }
@@ -47,24 +47,24 @@ class PrefixCalcTest {
 
     @Test
     public fun number() {
-        assertEquals(PrefixCalc.Number("123"), parser.number("123")?.value)
+        assertEquals(PrefixCalc.Number("123"), (parser.number("123").valueOrFail()))
     }
 
     @Test
     public fun plusNegatives() {
-        assertEquals(PrefixCalc.Operation('+', listOf(PrefixCalc.Number("-1"), PrefixCalc.Number("-123"))), parser.operation("+ -1 -123")?.value)
+        assertEquals(PrefixCalc.Operation('+', listOf(PrefixCalc.Number("-1"), PrefixCalc.Number("-123"))), parser.operation("+ -1 -123").valueOrFail())
     }
 
     @Test
     public fun ops() {
         for(op in listOf('+', '*', '/', '-')) {
-            assertEquals(PrefixCalc.Operation(op, listOf(PrefixCalc.Number("1"), PrefixCalc.Number("-123"))), parser.operation(op + " 1 -123")?.value)
+            assertEquals(PrefixCalc.Operation(op, listOf(PrefixCalc.Number("1"), PrefixCalc.Number("-123"))), parser.operation(op + " 1 -123").valueOrFail())
         }
     }
 
     @Test
     public fun minusNegatives() {
-        assertEquals(PrefixCalc.Operation('-', listOf(PrefixCalc.Number("-1"), PrefixCalc.Number("-123"))), parser.operation("- -1 -123")?.value)
+        assertEquals(PrefixCalc.Operation('-', listOf(PrefixCalc.Number("-1"), PrefixCalc.Number("-123"))), parser.operation("- -1 -123").valueOrFail())
     }
 
     @Test
@@ -73,6 +73,6 @@ class PrefixCalcTest {
                 '+',
                 listOf(PrefixCalc.Number("-1"),
                 PrefixCalc.Operation('+', listOf(PrefixCalc.Number("2"), PrefixCalc.Number("123"))))),
-        parser.operation("+ -1 (+ 2 123)")?.value)
+        parser.operation("+ -1 (+ 2 123)").valueOrFail())
     }
 }

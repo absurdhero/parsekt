@@ -1,9 +1,6 @@
 package net.raboof.parsekt.samples
 
-import net.raboof.parsekt.CharParsers
-import net.raboof.parsekt.Parser
-import net.raboof.parsekt.Reference
-import net.raboof.parsekt.string
+import net.raboof.parsekt.*
 import kotlin.collections.map
 import kotlin.collections.reduce
 import kotlin.text.isDigit
@@ -13,8 +10,8 @@ import kotlin.text.toLong
 /** A 4-function calculator for integers that uses prefix notation. */
 abstract class PrefixCalc<TInput>() : CharParsers<TInput>() {
     /** evaluate the input or return null */
-    fun evaluate(input: TInput) : Long? {
-        return operation(input)?.value?.evaluate();
+    fun evaluate(input: TInput) : Long {
+        return operation(input).valueOrFail().evaluate()
     }
 
     interface Expr {

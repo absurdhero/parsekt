@@ -3,6 +3,7 @@ package net.raboof.parsekt
 import org.junit.Test
 import kotlin.collections.*
 import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 class CharParsersTest {
 
@@ -10,32 +11,32 @@ class CharParsersTest {
 
     @Test
     fun firstChar() {
-        assertEquals(Result('t', "est"), parser.anyChar("test"))
+        assertEquals(Result.Value('t', "est"), parser.anyChar("test"))
     }
 
     @Test
     fun whitespace() {
-        assertEquals(Result(emptyList(), "test"), parser.whitespace("test"))
-        assertEquals(Result(listOf(' ', ' '), "test"), parser.whitespace("  test"))
+        assertEquals(Result.Value(emptyList<Char>(), "test"), parser.whitespace("test"))
+        assertEquals(Result.Value(listOf(' ', ' '), "test"), parser.whitespace("  test"))
     }
 
     @Test
     fun chars() {
-        assertEquals(null, parser.char('(')("x"))
-        assertEquals(Result('(', "test)"), parser.char('(')("(test)"))
-        assertEquals(Result(listOf('('), "test)"), parser.char('(').asList()("(test)"))
+        assertTrue(parser.char('(')("x") is Result.ParseError)
+        assertEquals(Result.Value('(', "test)"), parser.char('(')("(test)"))
+        assertEquals(Result.Value(listOf('('), "test)"), parser.char('(').asList()("(test)"))
     }
 
     @Test
     fun tokens() {
-        assertEquals(Result(listOf('a', 'b', 'c'), ""), parser.token("abc"))
+        assertEquals(Result.Value(listOf('a', 'b', 'c'), ""), parser.token("abc"))
 
         // consumes whitespace both before and after
-        assertEquals(Result(listOf('a', 'b', 'c'), ""), parser.token(" abc "))
-        assertEquals(Result("test", ""), parser.token.string()(" test "))
+        assertEquals(Result.Value(listOf('a', 'b', 'c'), ""), parser.token(" abc "))
+        assertEquals(Result.Value("test", ""), parser.token.string()(" test "))
 
         // does not match plain whitespace
-        assertEquals(null, parser.token(" "))
+        assertTrue(parser.token(" ") is Result.ParseError)
     }
 
     @Test
@@ -44,17 +45,19 @@ class CharParsersTest {
                 parser.char('(') and parser.whitespace,
                 parser.whitespace and parser.char(')'))
 
-        assertEquals(Result(listOf('x'), ""), parenWrappedToken("(x)"))
-        assertEquals(Result("test", ""), parenWrappedToken.string()("(test)"))
-        assertEquals(Result("test", " "), parenWrappedToken.string()("( test ) "))
+        assertEquals(Result.Value(listOf('x'), ""), parenWrappedToken("(x)"))
+        assertEquals(Result.Value("test", ""), parenWrappedToken.string()("(test)"))
+        assertEquals(Result.Value("test", " "), parenWrappedToken.string()("( test ) "))
     }
 
     @Test
     fun substring() {
-        assertEquals(null, parser.substring(Regex("a"))("x"))
-        assertEquals(Result("(", "test)"), parser.substring(Regex("\\(")).string()("(test)"))
-        assertEquals(Result("(test", ")"), parser.substring(Regex("\\([^)]*")).string()("(test)"))
-        assertEquals(Result("(test)", ""), parser.substring(Regex("\\([^)]+\\)")).string()("(test)"))
-        assertEquals(Result("(test)", ""), parser.substring(Regex(".*")).string()("(test)"))
+        assertTrue(parser.substring(Regex("a"))("x") is Result.ParseError)
+        assertEquals(Result.Value("(", "test)"), parser.substring(Regex("\\(")).string()("(test)"))
+        assertEquals(Result.Value("(test", ")"), parser.substring(Regex("\\([^)]*")).string()("(test)"))
+        assertEquals(Result.Value("(test)", ""), parser.substring(Regex("\\([^)]+\\)")).string()("(test)"))
+        assertEquals(Result.Value("(test)", ""), parser.substring(Regex(".*")).string()("(test)"))
+
+        assertEquals(Result.Value("\"\\\"foo\"", " abc"), parser.substring(Regex(""""(\\.|[^\\"])*"""")).string()("\"\\\"foo\" abc"))
     }
 }

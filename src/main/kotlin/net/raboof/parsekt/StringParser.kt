@@ -7,9 +7,9 @@ open public class StringParser() : CharParsers<String>() {
     override val anyChar: Parser<String, Char>
         get() = Parser { input: String ->
             when (input.length) {
-                0 -> null
-                1 -> Result(input[0], "")
-                else -> Result(input[0], input.substring(1))
+                0 -> Result.ParseError<String, Char>("EOF", null, "")
+                1 -> Result.Value(input[0], "")
+                else -> Result.Value(input[0], input.substring(1))
             }
         }
 }
