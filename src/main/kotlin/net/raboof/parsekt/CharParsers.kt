@@ -62,12 +62,11 @@ abstract class CharParsers<TInput>() : Parsers<TInput>() {
                         result = anyChar(result.rest)
                     }
 
-                    val res : Result<TInput, List<Char>> = if (everMatched) {
+                    if (everMatched) {
                         Result.Value(temp.toList(), lastRest)
                     } else {
-                        Result.ParseError("/$regex/", lastRest)
+                        Result.ParseError<TInput, List<Char>>("/$regex/", lastRest)
                     }
-                    res
                 }
             }
         })
