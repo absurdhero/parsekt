@@ -10,7 +10,7 @@ import kotlin.text.substring
 
 class PrefixCalcTest {
 
-    public class PrefixCalcStringParser() : PrefixCalc<String>() {
+    class PrefixCalcStringParser() : PrefixCalc<String>() {
         override val anyChar: Parser<String, Char>
             get() = Parser { input: String ->
                 when (input.length) {
@@ -25,8 +25,7 @@ class PrefixCalcTest {
 
     // These tests show the calculator in action
 
-    @Test
-    public fun evaluate() {
+    @Test fun evaluate() {
         check("+ 5 6", 11)
         check("- 20 8", 12)
         check("* 4 6", 24)
@@ -34,8 +33,7 @@ class PrefixCalcTest {
         check("- (* 10 10) (+ 1 1 1)", 97)
     }
 
-    @Test
-    public fun extraSpaces() {
+    @Test fun extraSpaces() {
         check(" - ( * 10 10 ) ( + 1 1 1 ) ", 97)
     }
 
@@ -45,30 +43,25 @@ class PrefixCalcTest {
 
     // These tests show how text is parsed into a tree structure
 
-    @Test
-    public fun number() {
+    @Test fun number() {
         assertEquals(PrefixCalc.Number("123"), (parser.number("123").valueOrFail()))
     }
 
-    @Test
-    public fun plusNegatives() {
+    @Test fun plusNegatives() {
         assertEquals(PrefixCalc.Operation('+', listOf(PrefixCalc.Number("-1"), PrefixCalc.Number("-123"))), parser.operation("+ -1 -123").valueOrFail())
     }
 
-    @Test
-    public fun ops() {
+    @Test fun ops() {
         for(op in listOf('+', '*', '/', '-')) {
             assertEquals(PrefixCalc.Operation(op, listOf(PrefixCalc.Number("1"), PrefixCalc.Number("-123"))), parser.operation(op + " 1 -123").valueOrFail())
         }
     }
 
-    @Test
-    public fun minusNegatives() {
+    @Test fun minusNegatives() {
         assertEquals(PrefixCalc.Operation('-', listOf(PrefixCalc.Number("-1"), PrefixCalc.Number("-123"))), parser.operation("- -1 -123").valueOrFail())
     }
 
-    @Test
-    public fun nestedExpression() {
+    @Test fun nestedExpression() {
         assertEquals(PrefixCalc.Operation(
                 '+',
                 listOf(PrefixCalc.Number("-1"),

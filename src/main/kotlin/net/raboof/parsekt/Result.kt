@@ -1,9 +1,9 @@
 package net.raboof.parsekt
 
 /** A parser can return one of two Results. Success with a value or error information. */
-public sealed class Result<TInput, TValue> {
+sealed class Result<TInput, TValue> {
 
-    public class Value<TInput, TValue>(val value: TValue, val rest: TInput) : Result<TInput, TValue>() {
+    class Value<TInput, TValue>(val value: TValue, val rest: TInput) : Result<TInput, TValue>() {
         override fun toString(): String {
             return "Value{value=$value, rest=$rest}"
         }
@@ -27,9 +27,9 @@ public sealed class Result<TInput, TValue> {
         }
     }
 
-    public class ParseError<TInput, TValue>(val productionLabel: String,
-                                            val child: ParseError<TInput, *>?,
-                                            val rest: TInput) : Result<TInput, TValue>() {
+    class ParseError<TInput, TValue>(val productionLabel: String,
+                                     val child: ParseError<TInput, *>?,
+                                     val rest: TInput) : Result<TInput, TValue>() {
 
         /** make a parent of another error */
         constructor(production: String, error: ParseError<TInput, *>) : this(production, error, error.rest)
@@ -50,7 +50,7 @@ public sealed class Result<TInput, TValue> {
     }
 
     /** convenience method for tests and other error tolerant usage */
-    public fun valueOrFail() : TValue {
+    fun valueOrFail() : TValue {
         return when (this) {
             is ParseError -> throw RuntimeException("parse error: $this")
             is Value -> this.value

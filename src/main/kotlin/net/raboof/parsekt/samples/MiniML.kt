@@ -13,11 +13,11 @@ import kotlin.text.isLetterOrDigit
  */
 
 // AST for the MiniML language
-public interface Terminal { }
-public data class LambdaTerm(val ident: String, val term: Terminal) : Terminal {}
-public data class LetTerm(val ident: String, val rhs: Terminal, val body: Terminal) : Terminal {}
-public data class AppTerm(val func: Terminal, val args: List<Terminal> = emptyList()) : Terminal {}
-public data class VarTerm(val ident: String) : Terminal {}
+interface Terminal { }
+data class LambdaTerm(val ident: String, val term: Terminal) : Terminal {}
+data class LetTerm(val ident: String, val rhs: Terminal, val body: Terminal) : Terminal {}
+data class AppTerm(val func: Terminal, val args: List<Terminal> = emptyList()) : Terminal {}
+data class VarTerm(val ident: String) : Terminal {}
 
 abstract class MiniML<TInput>(): CharParsers<TInput>() {
 

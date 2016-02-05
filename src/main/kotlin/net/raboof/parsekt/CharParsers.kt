@@ -10,34 +10,34 @@ abstract class CharParsers<TInput>() : Parsers<TInput>() {
     // implement anyChar to read a character from a sequence
     abstract val anyChar: Parser<TInput, Char>
 
-    public fun char(ch: Char): Parser<TInput, Char> {
+    fun char(ch: Char): Parser<TInput, Char> {
         return anyChar.filter({ c -> c == ch }).withErrorLabel("char($ch)")
     }
 
-    public fun char(predicate: (Char) -> Boolean): Parser<TInput, Char> {
+    fun char(predicate: (Char) -> Boolean): Parser<TInput, Char> {
         return anyChar.filter(predicate).withErrorLabel("char(predicate)")
     }
 
-    public fun char(regex: Regex): Parser<TInput, Char> {
+    fun char(regex: Regex): Parser<TInput, Char> {
         return anyChar.filter({ ch: Char -> regex.matches(ch.toString()) }).withErrorLabel("char(/$regex/)")
     }
 
-//    public val whitespace: Parser<TInput, List<Char>> = repeat(char(' ') or char('\t') or char('\n') or char('\r'));
-    public val whitespace = repeat(char(Regex("""\s"""))).withErrorLabel("whitespace")
-    public val wordChar = char(Regex("""\w"""))
-    public fun wsChar(ch: Char) = whitespace and char(ch)
-    public val token = repeat1(wordChar).between(whitespace)
+    //public val whitespace: Parser<TInput, List<Char>> = repeat(char(' ') or char('\t') or char('\n') or char('\r'));
+    val whitespace = repeat(char(Regex("""\s"""))).withErrorLabel("whitespace")
+    val wordChar = char(Regex("""\w"""))
+    fun wsChar(ch: Char) = whitespace and char(ch)
+    val token = repeat1(wordChar).between(whitespace)
 
-    public fun concat(p1: Parser<TInput, Char>, p2: Parser<TInput, List<Char>>): Parser<TInput, List<Char>> {
+    fun concat(p1: Parser<TInput, Char>, p2: Parser<TInput, List<Char>>): Parser<TInput, List<Char>> {
         return p1.project({v: Char, l: List<Char> -> arrayListOf(v) + l })({p2})
     }
 
-    public fun charPrefix(prefix: Char, parser: Parser<TInput, List<Char>>): Parser<TInput, List<Char>> {
+    fun charPrefix(prefix: Char, parser: Parser<TInput, List<Char>>): Parser<TInput, List<Char>> {
         return concat(char(prefix), parser) or parser
     }
 
     /** greedy regex matcher */
-    public fun substring(regex: Regex): Parser<TInput, List<Char>> {
+    fun substring(regex: Regex): Parser<TInput, List<Char>> {
         return Parser({ input ->
             var result = anyChar(input)
             when (result) {

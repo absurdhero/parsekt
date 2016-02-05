@@ -10,7 +10,7 @@ import kotlin.text.substring
 
 
 class MiniMLTest {
-    public class MiniMLStringParser() : MiniML<String>() {
+    class MiniMLStringParser() : MiniML<String>() {
         override val anyChar: Parser<String, Char>
             get() = Parser { input: String ->
                 when (input.length) {
@@ -23,26 +23,22 @@ class MiniMLTest {
 
     val parser = MiniMLStringParser();
 
-    @Test
-    public fun ident() {
+    @Test fun ident() {
         assertEquals("A123", parser.Ident("""A123""").valueOrFail())
     }
 
-    @Test
-    public fun lambda() {
+    @Test fun lambda() {
         assertEquals(
                 LambdaTerm("x", LambdaTerm("y", AppTerm(VarTerm("z")))),
                 parser.Lambda("""\x.\y.z""").valueOrFail())
     }
 
-    @Test
-    public fun term1() {
+    @Test fun term1() {
         assertEquals(VarTerm("A123"), parser.Term1("""A123""").valueOrFail())
         assertEquals(AppTerm(VarTerm("x")), parser.Term1("""(x)""").valueOrFail())
     }
 
-    @Test
-    public fun term() {
+    @Test fun term() {
         // lambda
         assertEquals(
                 LambdaTerm("x", LambdaTerm("y", AppTerm(VarTerm("z")))),
@@ -51,15 +47,13 @@ class MiniMLTest {
         assertEquals((AppTerm(VarTerm("A123"))), parser.Term("""A123""").valueOrFail())
     }
 
-    @Test
-    public fun let() {
+    @Test fun let() {
         assertEquals(
                 LetTerm("x", AppTerm(VarTerm("y")), AppTerm(VarTerm("z"))) as Terminal,
                 parser.Let("""let x = y in z""").valueOrFail())
     }
 
-    @Test
-    public fun program() {
+    @Test fun program() {
         assertNotNull(parser.All("\\x.y;"))
         assertTrue(parser.All("\\x.y") is Result.ParseError, "do not match if semicolon missing")
 
