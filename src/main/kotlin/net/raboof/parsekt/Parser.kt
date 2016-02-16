@@ -56,7 +56,7 @@ open class Parser<TInput, TValue>(val f: (TInput) -> Result<TInput, TValue>) {
                     val v = res.value
                     val res2 = selector(v)(res.rest)
                     when (res2) {
-                        is Result.ParseError -> Result.ParseError<TInput, TValue2>(res2)
+                        is Result.ParseError -> Result.ParseError(res2)
                         is Result.Value -> Result.Value(projector(v, res2.value), res2.rest)
                     }
                 }

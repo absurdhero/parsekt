@@ -65,7 +65,7 @@ abstract class CharParsers<TInput>() : Parsers<TInput>() {
                     if (everMatched) {
                         Result.Value(temp.toList(), lastRest)
                     } else {
-                        Result.ParseError<TInput, List<Char>>("/$regex/", lastRest)
+                        Result.ParseError("/$regex/", lastRest)
                     }
                 }
             }
