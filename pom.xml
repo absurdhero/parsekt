@@ -11,10 +11,32 @@
 
     <name>Parsekt - Parser Combinator</name>
     <url>http://github.com/absurdhero/parsekt</url>
+    <description>Parser combinator library for Kotlin which makes writing parsers easier</description>
+
+    <licenses>
+        <license>
+            <name>The Apache License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+        </license>
+    </licenses>
+
+    <developers>
+        <developer>
+            <name>absurdhero</name>
+            <organization>None</organization>
+            <organizationUrl>https://github.com/absurdhero</organizationUrl>
+        </developer>
+    </developers>
+
+    <scm>
+        <connection>scm:git:git@github.com:absurdhero/parsekt.git</connection>
+        <developerConnection>scm:git:git@github.com:absurdhero/parsekt.git</developerConnection>
+        <url>git:git@github.com:absurdhero/parsekt.git</url>
+    </scm>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <kotlin.version>1.0.0</kotlin.version>
+        <kotlin.version>1.0.1-2</kotlin.version>
         <junit.version>4.11</junit.version>
     </properties>
 
