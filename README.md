@@ -1,4 +1,4 @@
-# ParSekt &#127863;
+# ParSekt &#127863; [![Build Status](https://travis-ci.org/absurdhero/parsekt.svg?branch=master)](https://travis-ci.org/absurdhero/parsekt) [![codecov.io](https://codecov.io/github/absurdhero/parsekt/coverage.svg?branch=master)](https://codecov.io/github/absurdhero/parsekt?branch=master)
 
 Parser Combinator library for [Kotlin](http://kotlinlang.org) based on
 [Luke Hoban's blog post](http://blogs.msdn.com/b/lukeh/archive/2007/08/19/monadic-parser-combinators-using-c-3-0.aspx)

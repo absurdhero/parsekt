@@ -1,0 +1,15 @@
+# allows docker containers to be used for builds
+sudo: false
+
+language: java
+
+jdk:
+  - oraclejdk8
+
+cache:
+  directories:
+  - $HOME/.m2
+
+# code coverage
+after_success:
+  - bash <(curl -s https://codecov.io/bash)
