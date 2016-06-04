@@ -131,6 +131,7 @@ open class Parser<TInput, TValue>(val f: (TInput) -> Result<TInput, TValue>) {
 
     // sometimes useful for working around covariance problems (or from T to T?)
     fun <TValue2> cast() : Parser<TInput, TValue2> {
+        @Suppress("CAST_NEVER_SUCCEEDS")
         return this as Parser<TInput, TValue2>
     }
 }
