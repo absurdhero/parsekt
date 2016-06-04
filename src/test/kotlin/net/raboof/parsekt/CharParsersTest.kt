@@ -4,6 +4,7 @@ import org.junit.Test
 import kotlin.collections.*
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
+import kotlin.test.fail
 
 class CharParsersTest {
 
@@ -60,4 +61,20 @@ class CharParsersTest {
 
         assertEquals(Result.Value("\"\\\"foo\"", " abc"), parser.substring(Regex(""""(\\.|[^\\"])*"""")).string()("\"\\\"foo\" abc"))
     }
+
+
+    @Test
+    fun errorInformation() {
+        val result = parser.concat(parser.char('b'), parser.char('o'), parser.char('p')).string()("bolt")
+        when (result) {
+            is Result.ParseError -> {
+                assertEquals("char(p)", result.productionLabel)
+                assertEquals("t", result.rest)
+                assertEquals("Error{production=char(p), child=null, rest=t}", result.toString())
+                assertEquals("Error{production=char(p), child=null}", result.innerToString())
+            }
+            else -> fail()
+        }
+    }
+
 }

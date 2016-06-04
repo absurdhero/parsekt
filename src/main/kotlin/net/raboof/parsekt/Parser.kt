@@ -1,7 +1,5 @@
 package net.raboof.parsekt
 
-import kotlin.collections.listOf
-
 // based on http://blogs.msdn.com/b/lukeh/archive/2007/08/19/monadic-parser-combinators-using-c-3-0.aspx
 
 /** A Parser is both a function and an object with methods that return derivative parsers */
@@ -43,6 +41,11 @@ open class Parser<TInput, TValue>(val f: (TInput) -> Result<TInput, TValue>) {
      *
      * It invokes "this" followed by the parser returned from the selector function.
      * It then passes the two resulting values to the projector which returns one result.
+     *
+     * The selector "maps" the value from "this" to an intermediate parser.
+     * Then the projector "joins" the original value and the mapped value into a new value.
+     *
+     * See usages of this function in this library for examples of how to make use of it.
      */
     fun <TIntermediate, TValue2> mapJoin(
             selector: (TValue) -> Parser<TInput, TIntermediate>,
@@ -112,7 +115,10 @@ open class Parser<TInput, TValue>(val f: (TInput) -> Result<TInput, TValue>) {
 
     /* Generally useful functions */
 
-    // curry the projector function in mapJoin
+    /** curry the projector function in mapJoin
+     *
+     * @see mapJoin
+     */
     fun <TIntermediate, TValue2> project(projector: (TValue, TIntermediate) -> TValue2)
             : ((TValue) -> Parser<TInput, TIntermediate>) -> Parser<TInput, TValue2> {
         return { selector: (TValue) -> Parser<TInput, TIntermediate> ->

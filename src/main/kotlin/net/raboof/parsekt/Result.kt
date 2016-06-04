@@ -41,7 +41,7 @@ sealed class Result<TInput, TValue> {
         constructor(error: ParseError<TInput, *>) : this(error.productionLabel, error.child, error.rest)
 
         override fun toString(): String {
-            return "Error{production=$productionLabel, child=${child?.innerToString()}, rest=$rest"
+            return "Error{production=$productionLabel, child=${child?.innerToString()}, rest=$rest}"
         }
 
         fun innerToString(): String {
