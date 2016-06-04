@@ -32,6 +32,15 @@ abstract class CharParsers<TInput>() : Parsers<TInput>() {
         return p1.project({v: Char, l: List<Char> -> arrayListOf(v) + l })({p2})
     }
 
+    fun concat(vararg charParsers: Parser<TInput, Char>): Parser<TInput, List<Char>> {
+        var parser : Parser<TInput, List<Char>> = succeed(emptyList())
+
+        for (p in charParsers) {
+            parser = parser.project({l: List<Char>, v: Char -> l + v })({p})
+        }
+
+        return parser
+    }
     fun charPrefix(prefix: Char, parser: Parser<TInput, List<Char>>): Parser<TInput, List<Char>> {
         return concat(char(prefix), parser) or parser
     }
