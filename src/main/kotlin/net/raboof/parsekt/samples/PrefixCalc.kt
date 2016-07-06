@@ -11,7 +11,7 @@ import kotlin.text.toLong
 abstract class PrefixCalc<TInput>() : CharParsers<TInput>() {
     /** evaluate the input or return null */
     fun evaluate(input: TInput) : Long {
-        return operation(input).valueOrFail().evaluate()
+        return operation(input).result.valueOrFail().evaluate()
     }
 
     interface Expr {

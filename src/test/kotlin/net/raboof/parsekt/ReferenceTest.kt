@@ -15,7 +15,7 @@ class ReferenceTest {
         // use the error production label to figure out that the wrapped
         // parser is still calling the original char parser underneath
 
-        val result = exprRef.get()("y")
+        val result = exprRef.get()("y").result
         when (result) {
             is Result.ParseError -> assertEquals("char(x)", result.productionLabel)
             else -> fail()

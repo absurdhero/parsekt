@@ -48,9 +48,9 @@ abstract class CharParsers<TInput>() : Parsers<TInput>() {
     /** greedy regex matcher */
     fun substring(regex: Regex): Parser<TInput, List<Char>> {
         return Parser({ input ->
-            var result = anyChar(input)
+            var result = anyChar(input).result
             when (result) {
-                is Result.ParseError -> Result.ParseError(result)
+                is Result.ParseError -> Consumable.Empty(Result.ParseError(result))
                 is Result.Value -> {
                     val temp = StringBuilder()
                     var lastRest: TInput = result.rest
@@ -68,19 +68,18 @@ abstract class CharParsers<TInput>() : Parsers<TInput>() {
                         }
 
                         lastRest = result.rest
-                        result = anyChar(result.rest)
+                        result = anyChar(result.rest).result
                     }
 
                     if (everMatched) {
-                        Result.Value(temp.toList(), lastRest)
+                        Consumable.Consumed(Result.Value(temp.toList(), lastRest))
                     } else {
-                        Result.ParseError("/$regex/", lastRest)
+                        Consumable.Empty(Result.ParseError("/$regex/", lastRest))
                     }
                 }
             }
         })
     }
-
 }
 
 fun <TInput> Parser<TInput, List<Char>>.string(): Parser<TInput, String> {

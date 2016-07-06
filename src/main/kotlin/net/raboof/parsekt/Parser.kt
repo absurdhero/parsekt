@@ -3,33 +3,40 @@ package net.raboof.parsekt
 // based on http://blogs.msdn.com/b/lukeh/archive/2007/08/19/monadic-parser-combinators-using-c-3-0.aspx
 
 /** A Parser is both a function and an object with methods that return derivative parsers */
-open class Parser<TInput, TValue>(val f: (TInput) -> Result<TInput, TValue>) {
+open class Parser<TInput, TValue>(val f: (TInput) -> Consumable<TInput, TValue>) {
 
     /** A parser can be invoked as a function of an input that returns a result */
-    operator fun invoke(input: TInput): Result<TInput, TValue> = f(input)
+    operator fun invoke(input: TInput): Consumable<TInput, TValue> = f(input)
 
     /* the following filter and map functions are the building blocks used to derive new parsers */
 
     fun filter(pred: (TValue) -> Boolean): Parser<TInput, TValue> {
         return Parser({ input ->
-            val result = this(input)
-            when (result) {
-                is Result.Value -> if (pred(result.value)) {
-                    result
-                } else {
-                    Result.ParseError("filter", null, result.rest)
+            val consumable = this(input)
+            when (consumable) {
+                is Consumable.Empty -> consumable
+                is Consumable.Consumed -> {
+                    val result = consumable.result
+                    when (result) {
+                        is Result.Value -> if (pred(result.value)) {
+                            consumable
+                        } else {
+                            Consumable.Empty(Result.ParseError("filter", null, input))
+                        }
+                        is Result.ParseError -> consumable.withResult(result)
+                    }
                 }
-                is Result.ParseError -> result
             }
         })
     }
 
     fun <TValue2> mapResult(selector: (Result.Value<TInput, TValue>) -> Result<TInput, TValue2>): Parser<TInput, TValue2> {
         return Parser({ input ->
-            val result = this(input)
+            val consumable = this(input)
+            val result = consumable.result
             when (result) {
-                is Result.Value -> selector(result)
-                is Result.ParseError -> Result.ParseError(result)
+                is Result.Value -> consumable.withResult(selector(result))
+                is Result.ParseError -> consumable.withResult(Result.ParseError(result))
             }
         })
     }
@@ -52,15 +59,25 @@ open class Parser<TInput, TValue>(val f: (TInput) -> Result<TInput, TValue>) {
             projector: (TValue, TIntermediate) -> TValue2
     ): Parser<TInput, TValue2> {
         return Parser({ input ->
-            val res = this(input)
-            when (res) {
-                is Result.ParseError -> Result.ParseError(res)
+            val consumed1 = this(input)
+            val res1 = consumed1.result
+            when (res1) {
+                is Result.ParseError -> consumed1.withResult(Result.ParseError(res1))
                 is Result.Value -> {
-                    val v = res.value
-                    val res2 = selector(v)(res.rest)
+                    val v = res1.value
+                    val consumed2 = selector(v)(res1.rest)
+
+                    val createConsumer : (result: Result<TInput, TValue2>) -> Consumable<TInput, TValue2>
+                    if (consumed1 is Consumable.Empty && consumed2 is Consumable.Empty) {
+                        createConsumer = Consumable.factory(false)
+                    } else {
+                        createConsumer = Consumable.factory(true)
+                    }
+
+                    val res2 = consumed2.result
                     when (res2) {
-                        is Result.ParseError -> Result.ParseError(res2)
-                        is Result.Value -> Result.Value(projector(v, res2.value), res2.rest)
+                        is Result.ParseError -> createConsumer(Result.ParseError<TInput, TValue2>(res2))
+                        is Result.Value -> createConsumer(Result.Value(projector(v, res2.value), res2.rest))
                     }
                 }
             }
@@ -73,9 +90,10 @@ open class Parser<TInput, TValue>(val f: (TInput) -> Result<TInput, TValue>) {
 
     infix fun or(other: Parser<TInput, TValue>): Parser<TInput, TValue> {
         return Parser({ input ->
-            val result = this(input)
+            val consumable = this(input)
+            val result = consumable.result
             when (result) {
-                is Result.Value -> result
+                is Result.Value -> consumable.withResult(result)
                 is Result.ParseError -> other(input)
             }
         })
@@ -97,19 +115,20 @@ open class Parser<TInput, TValue>(val f: (TInput) -> Result<TInput, TValue>) {
      */
     fun mapError(errorFunc: (Result.ParseError<TInput, TValue>) -> Result.ParseError<TInput, TValue>): Parser<TInput, TValue> {
         return Parser({ input ->
-            val result = this(input)
+            val consumable = this(input)
+            val result = consumable.result
             when (result) {
-                is Result.Value -> result
-                is Result.ParseError -> errorFunc(result)
+                is Result.Value -> consumable.withResult(result)
+                is Result.ParseError -> consumable.withResult(errorFunc(result))
             }
         })
     }
 
-    fun withErrorLabel(label: String) : Parser<TInput, TValue> {
+    fun withErrorLabel(label: String): Parser<TInput, TValue> {
         return mapError { Result.ParseError(label, it.child, it.rest) }
     }
 
-    fun wrapError(label: String) : Parser<TInput, TValue> {
+    fun wrapError(label: String): Parser<TInput, TValue> {
         return mapError { Result.ParseError(label, it) }
     }
 
@@ -136,7 +155,7 @@ open class Parser<TInput, TValue>(val f: (TInput) -> Result<TInput, TValue>) {
     }
 
     // sometimes useful for working around covariance problems (or from T to T?)
-    fun <TValue2> cast() : Parser<TInput, TValue2> {
+    fun <TValue2> cast(): Parser<TInput, TValue2> {
         @Suppress("CAST_NEVER_SUCCEEDS")
         return this as Parser<TInput, TValue2>
     }

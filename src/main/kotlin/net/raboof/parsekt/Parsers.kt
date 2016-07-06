@@ -7,7 +7,7 @@ import kotlin.collections.plus
 /** Base parser combinator class which contains the core combinators */
 abstract class Parsers<TInput> {
     fun <TValue> succeed(value: TValue): Parser<TInput, TValue> {
-        return Parser({ input -> Result.Value(value, input) })
+        return Parser({ input -> Consumable.Empty(Result.Value(value, input)) })
     }
 
     fun <TValue> repeat(parser: Parser<TInput, TValue>): Parser<TInput, List<TValue>> {
