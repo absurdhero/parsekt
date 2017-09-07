@@ -10,7 +10,7 @@ import kotlin.text.substring
 
 class PrefixCalcTest {
 
-    class PrefixCalcStringParser() : PrefixCalc<String>() {
+    class PrefixCalcStringParser : PrefixCalc<String>() {
         override val anyChar: Parser<String, Char>
             get() = Parser { input: String ->
                 when (input.length) {
@@ -21,7 +21,7 @@ class PrefixCalcTest {
             }
     }
 
-    val parser = PrefixCalcStringParser();
+    val parser = PrefixCalcStringParser()
 
     // These tests show the calculator in action
 

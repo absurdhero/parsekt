@@ -13,13 +13,13 @@ import kotlin.text.isLetterOrDigit
  */
 
 // AST for the MiniML language
-interface Terminal { }
-data class LambdaTerm(val ident: String, val term: Terminal) : Terminal {}
-data class LetTerm(val ident: String, val rhs: Terminal, val body: Terminal) : Terminal {}
-data class AppTerm(val func: Terminal, val args: List<Terminal> = emptyList()) : Terminal {}
-data class VarTerm(val ident: String) : Terminal {}
+interface Terminal
+data class LambdaTerm(val ident: String, val term: Terminal) : Terminal
+data class LetTerm(val ident: String, val rhs: Terminal, val body: Terminal) : Terminal
+data class AppTerm(val func: Terminal, val args: List<Terminal> = emptyList()) : Terminal
+data class VarTerm(val ident: String) : Terminal
 
-abstract class MiniML<TInput>(): CharParsers<TInput>() {
+abstract class MiniML<TInput> : CharParsers<TInput>() {
 
     val Id = whitespace and concat(char(Char::isLetter), repeat(char(Char::isLetterOrDigit))).string()
     val Ident = Id.filter { it != "let" && it != "in" }

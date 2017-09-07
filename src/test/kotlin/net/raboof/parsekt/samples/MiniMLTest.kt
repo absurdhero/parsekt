@@ -10,7 +10,7 @@ import kotlin.text.substring
 
 
 class MiniMLTest {
-    class MiniMLStringParser() : MiniML<String>() {
+    class MiniMLStringParser : MiniML<String>() {
         override val anyChar: Parser<String, Char>
             get() = Parser { input: String ->
                 when (input.length) {
@@ -21,7 +21,7 @@ class MiniMLTest {
             }
     }
 
-    val parser = MiniMLStringParser();
+    val parser = MiniMLStringParser()
 
     @Test fun ident() {
         assertEquals("A123", parser.Ident("""A123""").valueOrFail())

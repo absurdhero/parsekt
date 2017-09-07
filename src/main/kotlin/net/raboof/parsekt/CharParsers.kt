@@ -6,7 +6,7 @@ import kotlin.collections.plus
 import kotlin.text.Regex
 
 /** Extends the basic combinators with many character-specific parsers */
-abstract class CharParsers<TInput>() : Parsers<TInput>() {
+abstract class CharParsers<TInput> : Parsers<TInput>() {
     // implement anyChar to read a character from a sequence
     abstract val anyChar: Parser<TInput, Char>
 
@@ -62,7 +62,7 @@ abstract class CharParsers<TInput>() : Parsers<TInput>() {
                         temp.append(result.value)
                         if (regex.matches(temp)) {
                             everMatched = true
-                        } else if (everMatched == true) {
+                        } else if (everMatched) {
                             temp.deleteCharAt(temp.length-1)
                             break
                         }

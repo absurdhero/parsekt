@@ -8,7 +8,7 @@ import kotlin.text.toLong
 
 
 /** A 4-function calculator for integers that uses prefix notation. */
-abstract class PrefixCalc<TInput>() : CharParsers<TInput>() {
+abstract class PrefixCalc<TInput> : CharParsers<TInput>() {
     /** evaluate the input or return null */
     fun evaluate(input: TInput) : Long {
         return operation(input).valueOrFail().evaluate()

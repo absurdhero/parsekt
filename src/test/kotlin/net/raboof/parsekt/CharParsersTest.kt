@@ -17,7 +17,7 @@ class CharParsersTest {
 
     @Test
     fun whitespace() {
-        assertEquals(Result.Value(emptyList<Char>(), "test"), parser.whitespace("test"))
+        assertEquals(Result.Value(emptyList(), "test"), parser.whitespace("test"))
         assertEquals(Result.Value(listOf(' ', ' '), "test"), parser.whitespace("  test"))
     }
 

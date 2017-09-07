@@ -82,11 +82,11 @@ open class Parser<TInput, TValue>(val f: (TInput) -> Result<TInput, TValue>) {
     }
 
     infix fun <TValue2> and(other: Parser<TInput, TValue2>): Parser<TInput, TValue2> =
-            this.mapJoin({ other }, { v, i -> i })
+            this.mapJoin({ other }, { _, i -> i })
 
     // like "and" but returns the value of the first parser
     infix fun <TValue2> before(other: Parser<TInput, TValue2>): Parser<TInput, TValue> =
-            this.mapJoin({ other }, { v, i -> v })
+            this.mapJoin({ other }, { v, _ -> v })
 
 
     /* error tracking */
@@ -137,7 +137,7 @@ open class Parser<TInput, TValue>(val f: (TInput) -> Result<TInput, TValue>) {
 
     // sometimes useful for working around covariance problems (or from T to T?)
     fun <TValue2> cast() : Parser<TInput, TValue2> {
-        @Suppress("CAST_NEVER_SUCCEEDS")
+        @Suppress("UNCHECKED_CAST")
         return this as Parser<TInput, TValue2>
     }
 }

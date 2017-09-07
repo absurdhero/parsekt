@@ -11,11 +11,11 @@ abstract class Parsers<TInput> {
     }
 
     fun <TValue> repeat(parser: Parser<TInput, TValue>): Parser<TInput, List<TValue>> {
-        return repeat1(parser) or succeed<List<TValue>>(emptyList())
+        return repeat1(parser) or succeed(emptyList())
     }
 
     fun <TValue> repeat1(parser: Parser<TInput, TValue>): Parser<TInput, List<TValue>> {
-        return parser.mapJoin({ v -> repeat(parser) }, { v: TValue, l: List<TValue> -> arrayListOf(v) + l })
+        return parser.mapJoin({ _ -> repeat(parser) }, { v: TValue, l: List<TValue> -> arrayListOf(v) + l })
                 .wrapError("repeat1")
     }
 }
