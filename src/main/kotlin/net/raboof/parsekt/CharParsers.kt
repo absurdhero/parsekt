@@ -11,7 +11,7 @@ abstract class CharParsers<TInput> : Parsers<TInput>() {
     abstract val anyChar: Parser<TInput, Char>
 
     fun char(ch: Char): Parser<TInput, Char> {
-        return anyChar.filter({ c -> c == ch }).withErrorLabel("char($ch)")
+        return anyChar.filter { c -> c == ch }.withErrorLabel("char($ch)")
     }
 
     fun char(predicate: (Char) -> Boolean): Parser<TInput, Char> {
@@ -19,7 +19,7 @@ abstract class CharParsers<TInput> : Parsers<TInput>() {
     }
 
     fun char(regex: Regex): Parser<TInput, Char> {
-        return anyChar.filter({ ch: Char -> regex.matches(ch.toString()) }).withErrorLabel("char(/$regex/)")
+        return anyChar.filter { ch: Char -> regex.matches(ch.toString()) }.withErrorLabel("char(/$regex/)")
     }
 
     //public val whitespace: Parser<TInput, List<Char>> = repeat(char(' ') or char('\t') or char('\n') or char('\r'));
@@ -47,7 +47,7 @@ abstract class CharParsers<TInput> : Parsers<TInput>() {
 
     /** greedy regex matcher */
     fun substring(regex: Regex): Parser<TInput, List<Char>> {
-        return Parser({ input ->
+        return Parser { input ->
             var result = anyChar(input)
             when (result) {
                 is Result.ParseError -> Result.ParseError(result)
@@ -78,7 +78,7 @@ abstract class CharParsers<TInput> : Parsers<TInput>() {
                     }
                 }
             }
-        })
+        }
     }
 
 }

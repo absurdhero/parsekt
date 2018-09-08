@@ -5,7 +5,6 @@ import net.raboof.parsekt.Result
 import org.junit.Test
 import kotlin.collections.listOf
 import kotlin.test.*
-import kotlin.text.plus
 import kotlin.text.substring
 
 class PrefixCalcTest {
@@ -53,7 +52,7 @@ class PrefixCalcTest {
 
     @Test fun ops() {
         for(op in listOf('+', '*', '/', '-')) {
-            assertEquals(PrefixCalc.Operation(op, listOf(PrefixCalc.Number("1"), PrefixCalc.Number("-123"))), parser.operation(op + " 1 -123").valueOrFail())
+            assertEquals(PrefixCalc.Operation(op, listOf(PrefixCalc.Number("1"), PrefixCalc.Number("-123"))), parser.operation("$op 1 -123").valueOrFail())
         }
     }
 

@@ -11,7 +11,7 @@ open class Parser<TInput, TValue>(val f: (TInput) -> Result<TInput, TValue>) {
     /* the following filter and map functions are the building blocks used to derive new parsers */
 
     fun filter(pred: (TValue) -> Boolean): Parser<TInput, TValue> {
-        return Parser({ input ->
+        return Parser { input ->
             val result = this(input)
             when (result) {
                 is Result.Value -> if (pred(result.value)) {
@@ -21,17 +21,17 @@ open class Parser<TInput, TValue>(val f: (TInput) -> Result<TInput, TValue>) {
                 }
                 is Result.ParseError -> result
             }
-        })
+        }
     }
 
     fun <TValue2> mapResult(selector: (Result.Value<TInput, TValue>) -> Result<TInput, TValue2>): Parser<TInput, TValue2> {
-        return Parser({ input ->
+        return Parser { input ->
             val result = this(input)
             when (result) {
                 is Result.Value -> selector(result)
                 is Result.ParseError -> Result.ParseError(result)
             }
-        })
+        }
     }
 
     fun <TValue2> map(selector: (TValue) -> TValue2): Parser<TInput, TValue2>
@@ -51,7 +51,7 @@ open class Parser<TInput, TValue>(val f: (TInput) -> Result<TInput, TValue>) {
             selector: (TValue) -> Parser<TInput, TIntermediate>,
             projector: (TValue, TIntermediate) -> TValue2
     ): Parser<TInput, TValue2> {
-        return Parser({ input ->
+        return Parser { input ->
             val res = this(input)
             when (res) {
                 is Result.ParseError -> Result.ParseError(res)
@@ -64,7 +64,7 @@ open class Parser<TInput, TValue>(val f: (TInput) -> Result<TInput, TValue>) {
                     }
                 }
             }
-        })
+        }
     }
 
     /* These are some essential combinators which are
@@ -72,13 +72,13 @@ open class Parser<TInput, TValue>(val f: (TInput) -> Result<TInput, TValue>) {
      */
 
     infix fun or(other: Parser<TInput, TValue>): Parser<TInput, TValue> {
-        return Parser({ input ->
+        return Parser { input ->
             val result = this(input)
             when (result) {
                 is Result.Value -> result
                 is Result.ParseError -> other(input)
             }
-        })
+        }
     }
 
     infix fun <TValue2> and(other: Parser<TInput, TValue2>): Parser<TInput, TValue2> =
@@ -96,13 +96,13 @@ open class Parser<TInput, TValue>(val f: (TInput) -> Result<TInput, TValue>) {
      * This is useful when the combinator knows more about why an error happened.
      */
     fun mapError(errorFunc: (Result.ParseError<TInput, TValue>) -> Result.ParseError<TInput, TValue>): Parser<TInput, TValue> {
-        return Parser({ input ->
+        return Parser { input ->
             val result = this(input)
             when (result) {
                 is Result.Value -> result
                 is Result.ParseError -> errorFunc(result)
             }
-        })
+        }
     }
 
     fun withErrorLabel(label: String) : Parser<TInput, TValue> {

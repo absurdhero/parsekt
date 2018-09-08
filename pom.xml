@@ -36,7 +36,7 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <kotlin.version>1.1.4-3</kotlin.version>
+        <kotlin.version>1.2.61</kotlin.version>
         <junit.version>4.12</junit.version>
         <kotlin.compiler.incremental>true</kotlin.compiler.incremental>
     </properties>
@@ -92,7 +92,7 @@
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
-                <version>0.7.6.201602180812</version>
+                <version>0.8.2</version>
                 <executions>
                     <execution>
                         <goals>
